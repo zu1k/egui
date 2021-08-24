@@ -1,9 +1,12 @@
 use crate::{window_settings::WindowSettings, *};
 use egui::Color32;
-use glium::glutin::platform::{run_return::EventLoopExtRunReturn, windows::WindowExtWindows};
+use glium::glutin::platform::{run_return::EventLoopExtRunReturn};
+
 #[cfg(target_os = "windows")]
-use glium::glutin::platform::windows::WindowBuilderExtWindows;
+use glium::glutin::platform::windows::{WindowExtWindows, WindowBuilderExtWindows};
+#[cfg(target_os = "windows")]
 use winapi::{shared::windef::HWND, um::winuser};
+
 
 use std::time::Instant;
 
@@ -186,6 +189,7 @@ pub fn run_return(mut app: Box<dyn epi::App>, native_options: epi::NativeOptions
     let mut event_loop = glutin::event_loop::EventLoop::with_user_event();
     let icon = native_options.icon_data.clone().and_then(load_icon);
     let display = create_display(&*app, &native_options, window_settings, icon, &event_loop);
+    #[cfg(target_os = "windows")]
     let h_wnd = display.gl_window().window().hwnd() as HWND;
 
     let repaint_signal = std::sync::Arc::new(GliumRepaintSignal(std::sync::Mutex::new(
@@ -376,6 +380,8 @@ pub fn run_return(mut app: Box<dyn epi::App>, native_options: epi::NativeOptions
             app.on_exit();
         }
     });
+    
+    #[cfg(target_os = "windows")]
     unsafe {
         winuser::DestroyWindow(h_wnd);
     }
