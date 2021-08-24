@@ -14,7 +14,6 @@
 //     rustdoc::missing_crate_level_docs,
 //     rustdoc::private_intra_doc_links
 // )]
-#![forbid(unsafe_code)]
 #![warn(clippy::all, rust_2018_idioms)]
 #![allow(clippy::manual_range_contains, clippy::single_match)]
 

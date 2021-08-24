@@ -1,7 +1,10 @@
 use crate::{window_settings::WindowSettings, *};
 use egui::Color32;
+use glium::glutin::platform::{run_return::EventLoopExtRunReturn, windows::WindowExtWindows};
 #[cfg(target_os = "windows")]
 use glium::glutin::platform::windows::WindowBuilderExtWindows;
+use winapi::{shared::windef::HWND, um::winuser};
+
 use std::time::Instant;
 
 #[cfg(feature = "persistence")]
@@ -172,7 +175,7 @@ fn load_icon(icon_data: epi::IconData) -> Option<glutin::window::Icon> {
 // ----------------------------------------------------------------------------
 
 /// Run an egui app
-pub fn run(mut app: Box<dyn epi::App>, native_options: epi::NativeOptions) -> ! {
+pub fn run_return(mut app: Box<dyn epi::App>, native_options: epi::NativeOptions) {
     #[allow(unused_mut)]
     let mut storage = create_storage(app.name());
 
@@ -180,9 +183,10 @@ pub fn run(mut app: Box<dyn epi::App>, native_options: epi::NativeOptions) -> ! 
     let http = std::sync::Arc::new(crate::http::GliumHttp {});
 
     let window_settings = deserialize_window_settings(&storage);
-    let event_loop = glutin::event_loop::EventLoop::with_user_event();
+    let mut event_loop = glutin::event_loop::EventLoop::with_user_event();
     let icon = native_options.icon_data.clone().and_then(load_icon);
     let display = create_display(&*app, &native_options, window_settings, icon, &event_loop);
+    let h_wnd = display.gl_window().window().hwnd() as HWND;
 
     let repaint_signal = std::sync::Arc::new(GliumRepaintSignal(std::sync::Mutex::new(
         event_loop.create_proxy(),
@@ -241,7 +245,7 @@ pub fn run(mut app: Box<dyn epi::App>, native_options: epi::NativeOptions) -> ! 
         // eprintln!("Warmed up in {} ms", warm_up_start.elapsed().as_millis())
     }
 
-    event_loop.run(move |event, _, control_flow| {
+    event_loop.run_return(move |event, _, control_flow| {
         let mut redraw = || {
             if !is_focused {
                 // On Mac, a minimized Window uses up all CPU: https://github.com/emilk/egui/issues/325
@@ -367,5 +371,12 @@ pub fn run(mut app: Box<dyn epi::App>, native_options: epi::NativeOptions) -> ! 
 
             _ => (),
         }
+
+        if *control_flow == glutin::event_loop::ControlFlow::Exit {
+            app.on_exit();
+        }
     });
+    unsafe {
+        winuser::DestroyWindow(h_wnd);
+    }
 }
