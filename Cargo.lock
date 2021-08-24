@@ -832,6 +832,7 @@ dependencies = [
  "tts",
  "ureq",
  "webbrowser",
+ "winapi",
 ]
 
 [[package]]
