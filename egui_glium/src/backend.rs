@@ -7,7 +7,6 @@ use glium::glutin::platform::windows::{WindowExtWindows, WindowBuilderExtWindows
 #[cfg(target_os = "windows")]
 use winapi::{shared::windef::HWND, um::winuser};
 
-
 use std::time::Instant;
 
 #[cfg(feature = "persistence")]
