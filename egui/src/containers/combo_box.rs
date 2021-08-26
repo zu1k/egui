@@ -79,7 +79,8 @@ impl ComboBox {
 
         let button_id = ui.make_persistent_id(id_source);
 
-        ui.horizontal(|ui| {
+        // origin horizontal
+        ui.scope(|ui| {
             if let Some(width) = width {
                 ui.spacing_mut().slider_width = width; // yes, this is ugly. Will remove later.
             }
