@@ -208,6 +208,7 @@ pub fn run_return(mut app: Box<dyn epi::App>, native_options: epi::NativeOptions
             http: http.clone(),
             output: &mut app_output,
             repaint_signal: repaint_signal.clone(),
+            decorated: false,
         }
         .build();
         app.setup(ctx, &mut frame, storage.as_deref());
@@ -234,6 +235,7 @@ pub fn run_return(mut app: Box<dyn epi::App>, native_options: epi::NativeOptions
             http: http.clone(),
             output: &mut app_output,
             repaint_signal: repaint_signal.clone(),
+            decorated: false,
         }
         .build();
 
@@ -271,6 +273,7 @@ pub fn run_return(mut app: Box<dyn epi::App>, native_options: epi::NativeOptions
                 http: http.clone(),
                 output: &mut app_output,
                 repaint_signal: repaint_signal.clone(),
+                decorated: false,
             }
             .build();
             app.update(ctx, &mut frame);
@@ -294,7 +297,9 @@ pub fn run_return(mut app: Box<dyn epi::App>, native_options: epi::NativeOptions
             }
 
             {
-                let epi::backend::AppOutput { quit, window_size } = app_output;
+                let epi::backend::AppOutput { quit, window_size, decorated } = app_output;
+
+                display.gl_window().window().set_decorations(decorated);
 
                 if let Some(window_size) = window_size {
                     display.gl_window().window().set_inner_size(
