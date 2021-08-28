@@ -106,6 +106,9 @@ impl epi::App for WrapApp {
         self.backend_panel.end_of_frame(ctx);
 
         self.ui_file_drag_and_drop(ctx);
+
+        // set this every time
+        frame.set_decorations(true);
     }
 }
 

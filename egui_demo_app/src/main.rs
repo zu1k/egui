@@ -16,6 +16,7 @@ fn main() {
     let options = eframe::NativeOptions {
         // Let's show off that we support transparent windows
         transparent: true,
+        decorated: false,
         ..Default::default()
     };
     eframe::run_native(Box::new(app), options);
