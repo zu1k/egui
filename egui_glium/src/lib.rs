@@ -7,7 +7,7 @@
 
 // Forbid warnings in release builds:
 #![cfg_attr(not(debug_assertions), deny(warnings))]
-#![forbid(unsafe_code)]
+// #![forbid(unsafe_code)]
 #![warn(clippy::all, missing_crate_level_docs, rust_2018_idioms)]
 #![allow(clippy::manual_range_contains, clippy::single_match)]
 
